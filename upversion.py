@@ -34,6 +34,7 @@ def extract_version(path, var):
     match = compile_re(var).search(content)
     if match is None:
         error(u'Could not find \'{} = "x.x.x"\' in file "{}"', var, path)
+
     return match.group('version')
 
 
@@ -44,7 +45,7 @@ def write_version(path, var, version):
         content = stream.read()
 
     with open(path, 'w') as stream:
-        stream.write(r.subn(r'\g<1>{}\g<3>'.format(version), content)[0])
+        stream.write(r.subn(r'\g<1>\g<2>{}\g<4>'.format(version), content)[0])
 
 
 @click.group()
