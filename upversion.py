@@ -3,7 +3,7 @@
 
 import re
 import click
-import pkg_resources
+from versio.version import Version
 
 
 VERSION_RE = r"""
@@ -22,30 +22,23 @@ def compile_re(var):
     return re.compile(VERSION_RE.format(name=var), re.VERBOSE)
 
 
-def parse_version(path, var):
-    """Parse major,minor,patch numbers"""
+def extract_version(path, var):
+    """Parse version from file
+
+    :path: Path to the version file
+    :var: var name to which is assigned
+    """
     with open(path) as stream:
         content = stream.read()
 
     match = compile_re(var).search(content)
     if match is None:
         error(u'Could not find \'{} = "x.x.x"\' in file "{}"', var, path)
-    version = match.group('version')
-    version = pkg_resources.parse_version(version).base_version
-
-    numbers = list(map(int, version.split(u'.')))
-    numbers += [0] * (len(numbers) - 3)  # complete N.N.N
-
-    return tuple(numbers)
-
-
-def string_version(version):
-    return u'.'.join(map(str, version))
+    return match.group('version')
 
 
 def write_version(path, var, version):
     r = compile_re(var)
-    version = string_version(version)
 
     with open(path, 'r') as stream:
         content = stream.read()
@@ -77,22 +70,23 @@ def options(function):
 
 def change_version(version, major, minor, patch):
     new_version = upversion(version, major, minor, patch)
-    click.echo(u'From {} to {}'.format(
-        string_version(version), string_version(new_version)))
+    click.echo(u'From {} to {}'.format(version, new_version))
     return new_version
 
 
 def upversion(version, major, minor, patch):
+    v = Version(version)
+
     if major:
-        version = version[0] + 1, 0, 0
+        v.bump('major')
 
     if minor:
-        version = version[0], version[1] + 1, 0
+        v.bump('minor')
 
     if patch:
-        version = version[0], version[1], version[2] + 1
+        v.bump('tiny')
 
-    return version
+    return str(v)
 
 
 def check_number_arguments(major, minor, patch):
@@ -106,14 +100,14 @@ def check_number_arguments(major, minor, patch):
 @options
 def view(path, var, major, minor, patch):
     check_number_arguments(major, minor, patch)
-    change_version(parse_version(path, var), major, minor, patch)
+    change_version(extract_version(path, var), major, minor, patch)
 
 
 @cli.command()
 @options
 def up(path, var, major, minor, patch):
     check_number_arguments(major, minor, patch)
-    new_version = change_version(parse_version(path, var), major, minor, patch)
+    new_version = change_version(extract_version(path, var), major, minor, patch)
     click.secho(u'writing "{}"'.format(path), fg='yellow')
     write_version(path, var, new_version)
 
