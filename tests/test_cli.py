@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
+import os
+import shutil
+
 from tests import CommandTest, here
-from hamcrest import contains_string
+from hamcrest import assert_that, contains_string
+
+EXAMPLE = here('examples', 'setup_0.0.0.py')
 
 
 class TestView(CommandTest):
-    defargs = ['--path', here('examples', 'setup_0.0.0.py')]
+    defargs = ['--path', EXAMPLE]
 
     def test_it_should_update_major(self):
         self.run(['view'] + ['--major'])
@@ -40,3 +45,17 @@ class TestView(CommandTest):
         self.run(['view'] + ['--major', '--minor', '--patch'])
 
         self.assert_result(output=contains_string('From 0.0.0 to 1.1.1'))
+
+
+class TestUp(CommandTest):
+    def test_it_should_replace_version(self):
+        with self.runner.isolated_filesystem() as path:
+            example_path = os.path.join(path, 'setup.py')
+            shutil.copyfile(EXAMPLE, example_path)
+
+            self.run(['up', '--major', '--minor', '--patch'])
+
+            self.assert_result(output=contains_string('From 0.0.0 to 1.1.1'))
+            self.assert_result(output=contains_string('writing "{}"'.format(example_path)))
+
+            assert_that(open(example_path).read(), contains_string("version='1.1.1'"))
