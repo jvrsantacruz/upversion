@@ -31,37 +31,27 @@ class TestView(CommandTest):
 
         self.assert_result(output=contains_string('From 0.0.0 to 0.0.0.dev1'))
 
-    def test_it_should_update_major_and_minor(self):
-        self.run(['view'] + ['--major', '--minor'])
+    def test_it_should_update_post(self):
+        self.run(['view'] + ['--post'])
 
-        self.assert_result(output=contains_string('From 0.0.0 to 1.1.0'))
+        self.assert_result(output=contains_string('From 0.0.0 to 0.0.0.post1'))
 
-    def test_it_should_update_major_and_patch(self):
-        self.run(['view'] + ['--major', '--patch'])
+    def test_it_should_update_all_at_the_same_time(self):
+        self.run(['view'] + ['--major', '--minor', '--patch', '--dev', '--post'])
 
-        self.assert_result(output=contains_string('From 0.0.0 to 1.0.1'))
-
-    def test_it_should_update_minor_and_patch(self):
-        self.run(['view'] + ['--minor', '--patch'])
-
-        self.assert_result(output=contains_string('From 0.0.0 to 0.1.1'))
-
-    def test_it_should_update_major_and_minor_and_patch(self):
-        self.run(['view'] + ['--major', '--minor', '--patch'])
-
-        self.assert_result(output=contains_string('From 0.0.0 to 1.1.1'))
+        self.assert_result(output=contains_string('From 0.0.0 to 1.1.1.post1.dev1'))
 
 
 class TestUp(CommandTest):
     def test_it_should_replace_version(self):
         initial = '0.0.0'
-        expected = '1.1.1.dev1'
+        expected = '1.1.1.post1.dev1'
 
         with self.runner.isolated_filesystem() as path:
             example_path = os.path.join(path, 'setup.py')
             shutil.copyfile(EXAMPLE, example_path)
 
-            self.run(['up', '--major', '--minor', '--patch', '--dev'])
+            self.run(['up', '--major', '--minor', '--patch', '--dev', '--post'])
 
             self.assert_result(output=contains_string('From {} to {}'.format(initial, expected)))
             self.assert_result(output=contains_string('writing "{}"'.format(example_path)))

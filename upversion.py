@@ -61,7 +61,8 @@ def options(function):
         click.option(u'-M', u'--major', is_flag=True),
         click.option(u'-m', u'--minor', is_flag=True),
         click.option(u'-p', u'--patch', is_flag=True),
-        click.option(u'-d', u'--dev', is_flag=True)
+        click.option(u'-d', u'--dev', is_flag=True),
+        click.option(u'-P', u'--post', is_flag=True)
     ]
 
     for option in opts:
@@ -76,7 +77,7 @@ def change_version(version, **flags):
     return new_version
 
 
-def upversion(version, major, minor, patch, dev):
+def upversion(version, major, minor, patch, dev, post):
     v = Version(version)
 
     if major:
@@ -88,6 +89,9 @@ def upversion(version, major, minor, patch, dev):
     if patch:
         v.bump('tiny')
 
+    if post:
+        v.bump('post')
+
     if dev:
         v.bump('dev')
 
@@ -96,9 +100,9 @@ def upversion(version, major, minor, patch, dev):
 
 def check_number_arguments(**kwargs):
     if not any(kwargs.values()):
+        options = u' '.join(u'--' + opt for opt in kwargs)
         raise click.UsageError(
-            u'Should specify at least one number to increase '
-            u'use {}'.format(u' '.join(u'--' + opt for opt in kwargs)))
+            u'Should specify at least one number to increase, use ' + options)
 
 
 @cli.command()
