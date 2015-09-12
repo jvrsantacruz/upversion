@@ -119,7 +119,3 @@ def up(path, var, **flags):
     new_version = change_version(extract_version(path, var), **flags)
     click.secho(u'writing "{}"'.format(path), fg='yellow')
     write_version(path, var, new_version)
-
-
-if __name__ == u'__main__':
-    cli()
