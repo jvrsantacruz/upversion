@@ -1,3 +1,9 @@
+0.2.0 (2015-09-12)
+------------------
+
+* Adds --post option to bump post versions
+* Adds --dev flag to bump dev versions
+
 0.1.0 (2015-09-11)
 ------------------
 
