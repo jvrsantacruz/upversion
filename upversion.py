@@ -60,7 +60,8 @@ def options(function):
         click.option(u'--var', default='version', envvar=u'UPVERSION_VAR'),
         click.option(u'-M', u'--major', is_flag=True),
         click.option(u'-m', u'--minor', is_flag=True),
-        click.option(u'-p', u'--patch', is_flag=True)
+        click.option(u'-p', u'--patch', is_flag=True),
+        click.option(u'-d', u'--dev', is_flag=True)
     ]
 
     for option in opts:
@@ -69,13 +70,13 @@ def options(function):
     return function
 
 
-def change_version(version, major, minor, patch):
-    new_version = upversion(version, major, minor, patch)
+def change_version(version, major, minor, patch, dev):
+    new_version = upversion(version, major, minor, patch, dev)
     click.echo(u'From {} to {}'.format(version, new_version))
     return new_version
 
 
-def upversion(version, major, minor, patch):
+def upversion(version, major, minor, patch, dev):
     v = Version(version)
 
     if major:
@@ -87,28 +88,32 @@ def upversion(version, major, minor, patch):
     if patch:
         v.bump('tiny')
 
+    if dev:
+        v.bump('dev')
+
     return str(v)
 
 
-def check_number_arguments(major, minor, patch):
-    if not (major or minor or patch):
+def check_number_arguments(major, minor, patch, dev):
+    if not (major or minor or patch or dev):
         raise click.UsageError(
             u'Should specify at least one number to increase '
-            u'use --major --minor --patch')
+            u'use --major --minor --patch --dev')
 
 
 @cli.command()
 @options
-def view(path, var, major, minor, patch):
-    check_number_arguments(major, minor, patch)
-    change_version(extract_version(path, var), major, minor, patch)
+def view(path, var, major, minor, patch, dev):
+    check_number_arguments(major, minor, patch, dev)
+    change_version(extract_version(path, var), major, minor, patch, dev)
 
 
 @cli.command()
 @options
-def up(path, var, major, minor, patch):
-    check_number_arguments(major, minor, patch)
-    new_version = change_version(extract_version(path, var), major, minor, patch)
+def up(path, var, major, minor, patch, dev):
+    check_number_arguments(major, minor, patch, dev)
+    new_version = change_version(
+        extract_version(path, var), major, minor, patch, dev)
     click.secho(u'writing "{}"'.format(path), fg='yellow')
     write_version(path, var, new_version)
 
