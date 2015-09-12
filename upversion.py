@@ -70,8 +70,8 @@ def options(function):
     return function
 
 
-def change_version(version, major, minor, patch, dev):
-    new_version = upversion(version, major, minor, patch, dev)
+def change_version(version, **flags):
+    new_version = upversion(version, **flags)
     click.echo(u'From {} to {}'.format(version, new_version))
     return new_version
 
@@ -94,26 +94,25 @@ def upversion(version, major, minor, patch, dev):
     return str(v)
 
 
-def check_number_arguments(major, minor, patch, dev):
-    if not (major or minor or patch or dev):
+def check_number_arguments(**kwargs):
+    if not any(kwargs.values()):
         raise click.UsageError(
             u'Should specify at least one number to increase '
-            u'use --major --minor --patch --dev')
+            u'use {}'.format(u' '.join(u'--' + opt for opt in kwargs)))
 
 
 @cli.command()
 @options
-def view(path, var, major, minor, patch, dev):
-    check_number_arguments(major, minor, patch, dev)
-    change_version(extract_version(path, var), major, minor, patch, dev)
+def view(path, var, **flags):
+    check_number_arguments(**flags)
+    change_version(extract_version(path, var), **flags)
 
 
 @cli.command()
 @options
-def up(path, var, major, minor, patch, dev):
-    check_number_arguments(major, minor, patch, dev)
-    new_version = change_version(
-        extract_version(path, var), major, minor, patch, dev)
+def up(path, var, **flags):
+    check_number_arguments(**flags)
+    new_version = change_version(extract_version(path, var), **flags)
     click.secho(u'writing "{}"'.format(path), fg='yellow')
     write_version(path, var, new_version)
 
