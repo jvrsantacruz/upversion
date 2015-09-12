@@ -56,13 +56,21 @@ def cli():
 def options(function):
     opts = [
         click.option(u'--path', default='./setup.py', envvar=u'UPVERSION_PATH',
+            show_default=True, help="Path to the file containing the version",
             type=click.Path(dir_okay=False, exists=True, resolve_path=True)),
-        click.option(u'--var', default='version', envvar=u'UPVERSION_VAR'),
-        click.option(u'-M', u'--major', is_flag=True),
-        click.option(u'-m', u'--minor', is_flag=True),
-        click.option(u'-p', u'--patch', is_flag=True),
-        click.option(u'-d', u'--dev', is_flag=True),
-        click.option(u'-P', u'--post', is_flag=True)
+        click.option(u'--var', default='version', envvar=u'UPVERSION_VAR',
+                     show_default=True, help=u"Name of the variable to wich "
+                     u"the version string is assigned"),
+        click.option(u'-M', u'--major', is_flag=True,
+                     help="Increase version major number M+1.m.p"),
+        click.option(u'-m', u'--minor', is_flag=True,
+                     help="Increase version minor number M.m+1.p"),
+        click.option(u'-p', u'--patch', is_flag=True,
+                     help="Increase version patch number M.m.p+1"),
+        click.option(u'-d', u'--dev', is_flag=True,
+                     help="Increase version dev number M.m.p.dev+1"),
+        click.option(u'-P', u'--post', is_flag=True,
+                     help="Increase version post number M.m.p.post+1")
     ]
 
     for option in opts:
