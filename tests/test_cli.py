@@ -63,6 +63,11 @@ class TestView(CommandTest):
 
         self.assert_result(output=contains_string('From 0.0.0 to 1.1.1.post1.dev1'))
 
+    def test_it_should_update_given_var(self):
+        self.run(['view'] + ['--major', '--minor', '--revision', '--var', 'no_version'])
+
+        self.assert_result(output=contains_string('From 1.1.1 to 2.1.1'))
+
 
 class TestUp(CommandTest):
     def test_it_should_replace_version(self):
