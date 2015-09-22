@@ -2,6 +2,7 @@
 import os
 import logging
 import traceback
+import contextlib
 
 from click.testing import CliRunner
 from hamcrest import (assert_that, all_of, has_property, has_properties,
@@ -23,10 +24,15 @@ class CommandTest(object):
     def run(self, args, **kwargs):
         logger.info(u'run: upversion' + u' '.join(args))
 
+        # Override default process environ
+        kwargs['env'] = kwargs.get('env', getattr(self, 'env', None))
+
+        # Add extra arguments by default
         if hasattr(self, 'defargs'):
             args += self.defargs
 
-        self.result = self.runner.invoke(cli, args, **kwargs)
+        with clean_environ():
+            self.result = self.runner.invoke(cli, args, **kwargs)
 
         if self.result.exit_code:
             logger.info(u'error result: \n' + self.result.output)
@@ -49,3 +55,15 @@ class CommandTest(object):
 
 def here(*parts):
     return os.path.join(os.path.realpath(os.path.dirname(__file__)), *parts)
+
+
+@contextlib.contextmanager
+def clean_environ():
+    env = dict(os.environ)
+    for key in list(os.environ):
+        if key.startswith('UPVERSION_'):
+            del os.environ[key]
+    try:
+        yield
+    finally:
+        os.environ.update(env)
