@@ -1,3 +1,10 @@
+0.3.0 (2015-09-22)
+------------------
+
+* Changes --patch option for --revision
+* Adds --version option
+* Fixes problem with version substitution
+
 0.2.1 (2015-09-12)
 ------------------
 
