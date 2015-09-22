@@ -66,11 +66,11 @@ def options(function):
                      help="Increase version major number M+1.m.p"),
         click.option(u'-m', u'--minor', is_flag=True,
                      help="Increase version minor number M.m+1.p"),
-        click.option(u'-p', u'--patch', is_flag=True,
-                     help="Increase version patch number M.m.p+1"),
+        click.option(u'-r', u'--revision', is_flag=True,
+                     help="Increase version revision number M.m.p+1"),
         click.option(u'-d', u'--dev', is_flag=True,
                      help="Increase version dev number M.m.p.dev+1"),
-        click.option(u'-P', u'--post', is_flag=True,
+        click.option(u'-p', u'--post', is_flag=True,
                      help="Increase version post number M.m.p.post+1")
     ]
 
@@ -86,7 +86,7 @@ def change_version(version, **flags):
     return new_version
 
 
-def upversion(version, major, minor, patch, dev, post):
+def upversion(version, major, minor, revision, post, dev):
     v = Version(version)
 
     if major:
@@ -95,7 +95,7 @@ def upversion(version, major, minor, patch, dev, post):
     if minor:
         v.bump('minor')
 
-    if patch:
+    if revision:
         v.bump('tiny')
 
     if post:

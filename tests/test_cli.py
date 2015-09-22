@@ -28,8 +28,8 @@ class TestView(CommandTest):
 
         self.assert_result(output=contains_string('From 0.0.0 to 0.1.0'))
 
-    def test_it_should_update_patch(self):
-        self.run(['view'] + ['--patch'])
+    def test_it_should_update_revision(self):
+        self.run(['view'] + ['--revision'])
 
         self.assert_result(output=contains_string('From 0.0.0 to 0.0.1'))
 
@@ -43,8 +43,23 @@ class TestView(CommandTest):
 
         self.assert_result(output=contains_string('From 0.0.0 to 0.0.0.post1'))
 
+    def test_it_should_update_major_and_revision(self):
+        self.run(['view'] + ['--major', '--revision'])
+
+        self.assert_result(output=contains_string('From 0.0.0 to 1.0.1'))
+
+    def test_it_should_update_minor_and_revision(self):
+        self.run(['view'] + ['--minor', '--revision'])
+
+        self.assert_result(output=contains_string('From 0.0.0 to 0.1.1'))
+
+    def test_it_should_update_major_and_minor_and_revision(self):
+        self.run(['view'] + ['--major', '--minor', '--revision'])
+
+        self.assert_result(output=contains_string('From 0.0.0 to 1.1.1'))
+
     def test_it_should_update_all_at_the_same_time(self):
-        self.run(['view'] + ['--major', '--minor', '--patch', '--dev', '--post'])
+        self.run(['view'] + ['--major', '--minor', '--revision', '--dev', '--post'])
 
         self.assert_result(output=contains_string('From 0.0.0 to 1.1.1.post1.dev1'))
 
@@ -58,7 +73,7 @@ class TestUp(CommandTest):
             example_path = os.path.join(path, 'setup.py')
             shutil.copyfile(EXAMPLE, example_path)
 
-            self.run(['up', '--major', '--minor', '--patch', '--dev', '--post'])
+            self.run(['up', '--major', '--minor', '--revision', '--dev', '--post'])
 
             self.assert_result(output=contains_string('From {} to {}'.format(initial, expected)))
             self.assert_result(output=contains_string('writing "{}"'.format(example_path)))
