@@ -3,9 +3,16 @@ import os
 import shutil
 
 from tests import CommandTest, here
-from hamcrest import assert_that, contains_string
+from hamcrest import assert_that, contains_string, matches_regexp
 
 EXAMPLE = here('examples', 'setup_0.0.0.py')
+
+
+class TestRootCommand(CommandTest):
+    def test_it_shows_version(self):
+        self.run(['--version'])
+
+        self.assert_result(output=matches_regexp(r'version \d+\.\d+\.\d+.*'))
 
 
 class TestView(CommandTest):

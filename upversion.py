@@ -49,6 +49,7 @@ def write_version(path, var, version):
 
 
 @click.group()
+@click.version_option()
 def cli():
     """Handle version numbers"""
 
