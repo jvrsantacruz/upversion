@@ -9,7 +9,7 @@ REQUIREMENTS = open(os.path.join(here, 'requirements.txt')).readlines()
 
 setup(
     name='upversion',
-    version='0.2.1',
+    version='0.2.1.dev1',
     description='Release python packages with ease',
     author='Javier Santacruz',
     author_email='jsl@taric.es',
