@@ -1,5 +1,6 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import with_statement
 
 import re
 import click
@@ -33,7 +34,7 @@ def extract_version(path, var):
 
     match = compile_re(var).search(content)
     if match is None:
-        error(u'Could not find \'{} = "x.x.x"\' in file "{}"', var, path)
+        error(u'Could not find \'{0} = "x.x.x"\' in file "{1}"', var, path)
 
     return match.group('version')
 
@@ -45,7 +46,7 @@ def write_version(path, var, version):
         content = stream.read()
 
     with open(path, 'w') as stream:
-        stream.write(r.subn(r'\g<1>\g<2>{}\g<4>'.format(version), content)[0])
+        stream.write(r.subn(r'\g<1>\g<2>{0}\g<4>'.format(version), content)[0])
 
 
 @click.group()
@@ -84,7 +85,7 @@ def options(function):
 
 def change_version(version, **flags):
     new_version = upversion(version, **flags)
-    click.echo(u'From {} to {}'.format(version, new_version))
+    click.echo(u'From {0} to {0}'.format(version, new_version))
     return new_version
 
 
@@ -131,5 +132,5 @@ def view(path, var, **flags):
 def up(path, var, **flags):
     check_number_arguments(**flags)
     new_version = change_version(extract_version(path, var), **flags)
-    click.secho(u'writing "{}"'.format(path), fg='yellow')
+    click.secho(u'writing "{0}"'.format(path), fg='yellow')
     write_version(path, var, new_version)

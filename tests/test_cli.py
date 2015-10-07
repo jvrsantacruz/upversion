@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import with_statement
+
 import io
 import os
 import shutil
@@ -111,6 +113,6 @@ class TestUp(CommandTest):
 
             self.run(['up', '--major', '--minor', '--revision', '--dev', '--post'])
 
-            self.assert_result(output=contains_string('From {} to {}'.format(initial, expected)))
-            self.assert_result(output=contains_string('writing "{}"'.format(example_path)))
-            assert_that(open(example_path).read(), contains_string("version='{}'".format(expected)))
+            self.assert_result(output=contains_string('From {0} to {1}'.format(initial, expected)))
+            self.assert_result(output=contains_string('writing "{0}"'.format(example_path)))
+            assert_that(open(example_path).read(), contains_string("version='{0}'".format(expected)))
