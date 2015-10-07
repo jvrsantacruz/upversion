@@ -1,3 +1,8 @@
+0.3.0 (2015-10-08)
+------------------
+
+* Adds --final option which removes .dev or .post suffix
+
 0.2.1 (2015-09-12)
 ------------------
 
