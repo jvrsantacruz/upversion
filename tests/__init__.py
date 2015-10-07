@@ -14,7 +14,11 @@ logger = logging.getLogger('tests.cli')
 
 class CommandTest(object):
     def setup(self):
+        self.setup_fixture()
         self.setup_runner()
+
+    def setup_fixture(self):
+        pass
 
     def setup_runner(self):
         self.runner = CliRunner()
