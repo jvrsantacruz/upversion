@@ -1,7 +1,12 @@
-0.3.1 (2016-01-14)
+0.4.1 (2016-01-14)
 ------------------
 
 * Adds version script and dicto config
+
+0.4.0 (2015-10-08)
+------------------
+
+* Adds --final option which removes .dev or .post suffix
 
 0.3.0 (2015-09-22)
 ------------------

@@ -1,11 +1,23 @@
 # -*- coding: utf-8 -*-
+import io
 import os
 import shutil
+import tempfile
+import contextlib
 
 from tests import CommandTest, here
 from hamcrest import assert_that, contains_string, matches_regexp
 
 EXAMPLE = here('examples', 'setup_0.0.0.py')
+
+
+@contextlib.contextmanager
+def version_file(version='0.0.0'):
+    with tempfile.NamedTemporaryFile() as tmp:
+        with io.open(EXAMPLE, encoding='utf-8') as stream:
+            tmp.file.write(stream.read().replace('0.0.0', version).encode('utf-8'))
+            tmp.file.flush()
+        yield tmp.name
 
 
 class TestRootCommand(CommandTest):
@@ -67,6 +79,25 @@ class TestView(CommandTest):
         self.run(['view'] + ['--major', '--minor', '--revision', '--var', 'no_version'])
 
         self.assert_result(output=contains_string('From 1.1.1 to 2.1.1'))
+
+    def test_it_should_remove_dev_when_final(self):
+        with version_file('0.0.0.dev1') as path:
+            self.defargs = ['--path', path]
+
+            self.run(['view'] + ['--final'])
+
+        self.assert_result(output=contains_string('From 0.0.0.dev1 to 0.0.0'))
+
+    def test_it_should_remove_post_when_final(self):
+        with version_file('0.0.0.post1') as path:
+            self.defargs = ['--path', path]
+
+            self.run(['view'] + ['--final'])
+
+        self.assert_result(output=contains_string('From 0.0.0.post1 to 0.0.0'))
+
+    def setup_fixture(self):
+        self.defargs = ['--path', EXAMPLE]
 
 
 class TestUp(CommandTest):

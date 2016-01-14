@@ -61,18 +61,20 @@ def options(function):
                      show_default=True, help="Path to the file containing the "
                      "version (env: UPVERSION_PATH)"),
         click.option(u'--var', default='version', envvar=u'UPVERSION_VAR',
-                     show_default=True, help=u"Name of the variable to wich "
-                     u"the version string is assigned  (env: UPVERSION_VAR)"),
+                     show_default=True, help=u"Name of the variable holding "
+                     u"the version string (env: UPVERSION_VAR)"),
         click.option(u'-M', u'--major', is_flag=True,
-                     help="Increase version major number M+1.m.p"),
+            help="Increase version major number M+1.m.p"),
         click.option(u'-m', u'--minor', is_flag=True,
-                     help="Increase version minor number M.m+1.p"),
-        click.option(u'-r', u'--revision', is_flag=True,
-                     help="Increase version revision number M.m.p+1"),
+            help="Increase version minor number M.m+1.p"),
+        click.option(u'-p', u'--revision', is_flag=True,
+            help="Increase version revision number M.m.p+1"),
         click.option(u'-d', u'--dev', is_flag=True,
-                     help="Increase version dev number M.m.p.dev+1"),
-        click.option(u'-p', u'--post', is_flag=True,
-                     help="Increase version post number M.m.p.post+1")
+            help="Increase version dev number M.m.p.dev+1"),
+        click.option(u'-P', u'--post', is_flag=True,
+            help="Increase version post number M.m.p.post+1"),
+        click.option(u'-F', u'--final', is_flag=True,
+            help="Make the version final, removing dev or post")
     ]
 
     for option in opts:
@@ -87,7 +89,7 @@ def change_version(version, **flags):
     return new_version
 
 
-def upversion(version, major, minor, revision, post, dev):
+def upversion(version, major, minor, revision, dev, post, final):
     v = Version(version)
 
     if major:
@@ -104,6 +106,9 @@ def upversion(version, major, minor, revision, post, dev):
 
     if dev:
         v.bump('dev')
+
+    if final:
+        v.parts = [v.parts[0], None, None, None, None]
 
     return str(v)
 
