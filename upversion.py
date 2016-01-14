@@ -57,11 +57,12 @@ def cli():
 def options(function):
     opts = [
         click.option(u'--path', default='./setup.py', envvar=u'UPVERSION_PATH',
-            show_default=True, help="Path to the file containing the version",
-            type=click.Path(dir_okay=False, exists=True, resolve_path=True)),
+                     type=click.Path(dir_okay=False, exists=True, resolve_path=True),
+                     show_default=True, help="Path to the file containing the "
+                     "version (env: UPVERSION_PATH)"),
         click.option(u'--var', default='version', envvar=u'UPVERSION_VAR',
                      show_default=True, help=u"Name of the variable to wich "
-                     u"the version string is assigned"),
+                     u"the version string is assigned  (env: UPVERSION_VAR)"),
         click.option(u'-M', u'--major', is_flag=True,
                      help="Increase version major number M+1.m.p"),
         click.option(u'-m', u'--minor', is_flag=True,
